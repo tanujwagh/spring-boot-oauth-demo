@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 /**
  * Created by macintosh on 7/27/17.
@@ -21,10 +22,12 @@ import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConv
 public class OAuth2ServerConfiguration  extends AuthorizationServerConfigurerAdapter{
 
     private AuthenticationManager authenticationManager;
+    private JwtAccessTokenConverter jwtAccessTokenConverter;
 
     @Autowired
-    public OAuth2ServerConfiguration(@Qualifier("authenticationManagerBean") AuthenticationManager authenticationManager) {
+    public OAuth2ServerConfiguration(@Qualifier("authenticationManagerBean") AuthenticationManager authenticationManager, JwtAccessTokenConverter jwtAccessTokenConverter) {
         this.authenticationManager = authenticationManager;
+        this.jwtAccessTokenConverter = jwtAccessTokenConverter;
     }
 
     @Override
@@ -45,7 +48,9 @@ public class OAuth2ServerConfiguration  extends AuthorizationServerConfigurerAda
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.accessTokenConverter(new DefaultAccessTokenConverter())
+        endpoints.accessTokenConverter(jwtAccessTokenConverter)
         .authenticationManager(authenticationManager);
     }
+
+
 }
